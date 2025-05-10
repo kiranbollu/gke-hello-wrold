@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: hello-stateful
+  namespace: hello-world
+spec:
+  serviceName: "hello-service"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hello
+  template:
+    metadata:
+      labels:
+        app: hello
+    spec:
+      containers:
+        - name: hello
+          image: gcr.io/<your-project-id>/hello-world:latest
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: hello-storage
+              mountPath: /data
+  volumeClaimTemplates:
+    - metadata:
+        name: hello-storage
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 1Gi
